@@ -9,20 +9,15 @@ class Bullet(pygame.sprite.Sprite):
         super().__init__()
 
         #Set constant variables
-        # TODO: assign 20 to self.VELOCITY
+        self.VELOCITY = 20
         # TODO: assign 500 to self.RANGE
 
         #Load image and get rect
-        # TODO: if player.velocity.x > 0:
-            # TODO: assign pygame.transform.scale() to self.image with these 2 arguments
-            #  1: pygame.image.load("images/player.slash.png")
-            #  2: (32, 32)
-        # TODO: else:
-            # TODO: assign pygame.transform.scale() to self.image with these 3 arguments
-            #  1: pygame.transform.flip(pygame.image.load("images/player/slash.png")
-            #  2: True
-            #  3: False
-            # TODO: assign -1 * self.VELOCITY to self.VELOCITY
+        if player.velocity.x > 0:
+            self.image = pygame.transform.scale(pygame.image.load("images/player.slash.png"), (32, 32))
+        else:
+            self.image = pygame.transform.scale(pygame.transform.flip(pygame.image.load("images/player/slash.png"), True, False), (32, 32))
+            self.VELOCITY = -1 * self.VELOCITY
 
         # TODO: assign self.image.get_rect() to self.rect
         # TODO: assign (x, y) to self.rect.center
@@ -30,7 +25,7 @@ class Bullet(pygame.sprite.Sprite):
         # TODO: assign x to self.starting_x
 
         # TODO: call bullet_group.add() with this 1 argument
-        # 1: self
+        #  1: self
 
 
     def update(self):

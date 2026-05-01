@@ -217,12 +217,11 @@ class Player(pygame.sprite.Sprite):
     def fire(self):
         """Fire a 'bullet' from a sword"""
         # TODO: call self.slash_sound.play()
-        # TODO: call Bullet() with these 5 arguments
+        # TODO: call Bullet() with these 4 arguments
         #  1: self.rect.centerx
-        #  2:
-        #  3: self.rect.centery
-        #  4: self.bullet_group
-        #  5: self)
+        #  2: self.rect.centery
+        #  3: self.bullet_group
+        #  4: self)
         # TODO: assign True to self.animate_fire
 
     def reset(self):
