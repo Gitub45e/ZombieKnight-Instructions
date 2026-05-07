@@ -33,10 +33,7 @@ class Player(pygame.sprite.Sprite):
         self.idle_right_sprites = load_frames("images/player/idle", IDLE_FRAMES, (64, 64) )
         self.idle_left_sprites = flip_frames("self.idle_right_sprites")
         self.jump_right_sprites = load_frames("images/player/jump", JUMP_FRAMES,(64, 64))
-
-        # TODO: assign flip_frames() to self.jump_left_sprites() with this 1 arguments
-        #  1: self.jump_right_sprites
-        self.jump_left_sprites() == flip_frames("self.jump_right_sprites")
+        self.jump_left_sprites = flip_frames("self.jump_right_sprites")
 
         self.attack_right_sprites = load_frames("images/player/attack",ATTACK_FRAMES,(64, 64))
         self.attack_left_sprites = flip_frames(self.attack_right_sprites)
@@ -47,11 +44,16 @@ class Player(pygame.sprite.Sprite):
         self.rect.bottomleft = (x, y)
         self.mask = c(self.image)
         #Attach sprite groups
+        # TODO: assign platform_group to self.platform_group
+        # TODO: assign portal_group to self.portal_group
+        # TODO: assign bullet_group to self.bullet_group
         self.bullet_group = bullet_group
         self.portal_group = portal_group
         self.platform_group = platform_group
         #Animation booleans
+        # TODO: assign False to self.animate_jump
         self.animate_jump = False
+        # TODO: assign False to self.animate_fire
         self.animate_fire = False
 
         #Load sounds
@@ -61,32 +63,40 @@ class Player(pygame.sprite.Sprite):
         self.hit_sound = pygame.mixer.Sound("sounds/player_hit.wav")
 
         #Kinematics vectors
+        # TODO: assign vector() to self.position with these 2 arguments
         self.position = vector(x,y)
         #  1: x
         #  2: y
 
+        # TODO: assign vector() to self.velocity with these 2 arguments
         self.velocity = vector(0,0)
         #  1: 0
         #  2: 0
 
+        # TODO assign vector() to  self.acceleration with these 2 arguments
         self.acceleration = vector(0,self.VERTICAL_ACCELERATION)
         #  1: 0
         #  2: self.VERTICAL_ACCELERATION
 
         #Set initial player values
+        # TODO: assign self.STARTING_HEALTH TO self.health
         self.health = self.STARTING_HEALTH
+        # TODO: assign x to self.starting_x
         self.starting_x = x
+        # TODO: assign y to self.starting_y
         self.starting_y = y
 
 
     def update(self):
         """Update the player"""
+        # TODO: call self.move()
+        # TODO: call self.check_collisions()
+        # TODO: call self.check_animations()
         self.move
         self.check_collisions()
         self.check_animations()
         #Update the player's mask
         # TODO: assign pygame.mask.from_surface() to self.mask with this 1 argument
-
         self.mask = pygame.mask.from_surface(self.image)
         #  1: self.image
 
