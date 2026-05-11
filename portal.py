@@ -14,37 +14,32 @@ class Portal(pygame.sprite.Sprite):
         """Initialize the portal"""
         super().__init__()
 
-        folder = None
-        # TODO: if color == "green":
         if color == "green":
-            # TODO: folder = "images/portals/green
             folder = "images/portals/green"
-        # TODO: else:
         else:
-            # TODO: folder = "images/portals/purple"
             folder = "images/portals/purple"
-
-        self.portal_sprites = load_frames(folder,PORTAL_FRAMES,(72, 72))
-
+        self.portal_sprites = load_frames(folder, PORTAL_FRAMES, (72, 72))
 
         #Load an image and get a rect
-        self.current_sprite = random.randint(0,len(self.portal_sprites) - 1)
+        self.current_sprite = random.randint(0, len(self.portal_sprites) - 1)
         self.image = self.portal_sprites[self.current_sprite]
         self.rect = self.image.get_rect()
         self.rect.bottomleft = (x, y)
 
         #Add to the portal group
         portal_group.add(self)
-        #  1: self
+
 
     def update(self):
         """Update the portal"""
-        self.animate(self.portal_sprites,0.2)
+        self.animate(self.portal_sprites, .2)
+
 
     def animate(self, sprite_list, speed):
         """Animate the portal"""
-        if self.current_sprite < len(sprite_list) - 1:
+        if self.current_sprite < len(sprite_list) -1:
             self.current_sprite += speed
         else:
             self.current_sprite = 0
+
         self.image = sprite_list[int(self.current_sprite)]

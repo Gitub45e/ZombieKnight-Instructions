@@ -14,13 +14,13 @@ class Bullet(pygame.sprite.Sprite):
 
         #Load image and get rect
         if player.velocity.x > 0:
-            self.image = pygame.transform.scale(pygame.image.load("images/player.slash.png"),(32, 32))
+            self.image = pygame.transform.scale(pygame.image.load("images/player/slash.png"), (32,32))
         else:
-            self.image = pygame.transform.scale(pygame.transform.flip(pygame.image.load("images/player/slash.png"),True,False),(32,32))
-            self.VELOCITY = -1 * self.VELOCITY
+            self.image = pygame.transform.scale(pygame.transform.flip(pygame.image.load("images/player/slash.png"), True, False), (32,32))
+            self.VELOCITY = -1*self.VELOCITY
 
         self.rect = self.image.get_rect()
-        self.rect.center = x, y
+        self.rect.center = (x, y)
 
         self.starting_x = x
 
@@ -29,7 +29,7 @@ class Bullet(pygame.sprite.Sprite):
 
     def update(self):
         """Update the bullet"""
-        self.rect.x = self.VELOCITY
+        self.rect.x += self.VELOCITY
 
         #If the bullet has passed the range, kill it
         if abs(self.rect.x - self.starting_x) > self.RANGE:

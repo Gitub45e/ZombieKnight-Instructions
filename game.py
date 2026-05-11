@@ -1,4 +1,5 @@
 import pygame
+
 from settings import FPS, WINDOW_HEIGHT, WINDOW_WIDTH, display_surface
 from zombie import Zombie
 from ruby import Ruby
@@ -87,44 +88,49 @@ class Game:
         display_surface.blit(round_text, round_rect)
         display_surface.blit(time_text, time_rect)
 
+
     def add_zombie(self):
         """Add a zombie to the game"""
-        # Check to add a zombie every second
+        #Check to add a zombie every second
         if self.frame_count % FPS == 0:
-           # Only add a zombie if zombie creation time has passed
-           if self.round_time % self.zombie_creation_time == 0:
-                zombie = Zombie(self.platform_group,self.portal_group,self.round_number,5 + self.round_number)
+            #Only add a zombie if zombie creation time has passed
+            if self.round_time % self.zombie_creation_time == 0:
+                zombie = Zombie(self.platform_group, self.portal_group, self.round_number, 5 + self.round_number)
                 self.zombie_group.add(zombie)
+
+
     def check_collisions(self):
         """Check collisions that affect gameplay"""
-        # See if any bullet in the bullet group hit a zombie in the zombie group
-        collision_dict = pygame.sprite.groupcollide(self.bullet_group,self.bullet_group,True,False)
+        #See if any bullet in the bullet group hit a zombie in the zombie group
+        collision_dict = pygame.sprite.groupcollide(self.bullet_group, self.zombie_group, True, False)
         if collision_dict:
             for zombies in collision_dict.values():
-                  for zombie in zombies:
-                   zombie.hit_sound.play()
-                   zombie.is_dead = True
-                   zombie.animate_death = True
+                for zombie in zombies:
+                    zombie.hit_sound.play()
+                    zombie.is_dead = True
+                    zombie.animate_death = True
 
-        # See if a player stomped a dead zombie to finish it or collided with a live zombie to take damage
-        collision_list =  pygame.sprite.spritecollide(self.player,self.zombie_group,False)
+        #See if a player stomped a dead zombie to finish it or collided with a live zombie to take damage
+        collision_list = pygame.sprite.spritecollide(self.player, self.zombie_group, False)
         if collision_list:
             for zombie in collision_list:
-             # The zombie is dead; stomp it
-             if zombie.is_dead:
-                 zombie.kick_sound.play()
-                 zombie.kill()
-                 self.score = 25
-                 Ruby(self.platform_group,self.portal_group)
-                 self.ruby_group.add(ruby)
-            else:
-                 self.player.health -= 20
-                 self.player.hit_sound.play()
-        # Move the player to not continually take damage
-        self.player.position.x -= 256*zombie.direction
-        self.player.rect.bottomleft = self.player.position
+                #The zombie is dead; stomp it
+                if zombie.is_dead:
+                    zombie.kick_sound.play()
+                    zombie.kill()
+                    self.score += 25
 
-        # See if a player collided with a ruby
+                    ruby = Ruby(self.platform_group, self.portal_group)
+                    self.ruby_group.add(ruby)
+                #The zombie isn't dead, so take damage
+                else:
+                    self.player.health -= 20
+                    self.player.hit_sound.play()
+                    #Move the player to not continually take damage
+                    self.player.position.x -= 256*zombie.direction
+                    self.player.rect.bottomleft = self.player.position
+
+        #See if a player collided with a ruby
         if pygame.sprite.spritecollide(self.player, self.ruby_group, True):
             self.ruby_pickup_sound.play()
             self.score += 100
@@ -132,83 +138,99 @@ class Game:
             if self.player.health > self.player.STARTING_HEALTH:
                 self.player.health = self.player.STARTING_HEALTH
 
-        # See if a living zombie collided with a ruby
+        #See if a living zombie collided with a ruby
         for zombie in self.zombie_group:
             if not zombie.is_dead:
                 if pygame.sprite.spritecollide(zombie, self.ruby_group, True):
                     self.lost_ruby_sound.play()
-                    zombie = Zombie(self.platform_group,self.portal_group,self.round_number,5 + self.round_number)
+                    zombie = Zombie(self.platform_group, self.portal_group, self.round_number, 5 + self.round_number)
                     self.zombie_group.add(zombie)
 
+
     def check_round_completion(self):
-            """Check if the player survived a single night"""
-            if self.round_time == 0:
-                self.start_new_round()
+        """Check if the player survived a single night"""
+        if self.round_time == 0:
+            self.start_new_round()
+
 
     def check_game_over(self):
-            """Check to see if the player lost the game"""
-            if self.player.health <= 0:
-                pygame.mixer.music.stop()
-                self.pause_game("Game Over! Final Score: " + str(self.score),"Press 'Enter' to play again...")
-                self.reset_game()
+        """Check to see if the player lost the game"""
+        if self.player.health <= 0:
+            pygame.mixer.music.stop()
+            self.pause_game("Game Over! Final Score: " + str(self.score), "Press 'Enter' to play again...")
+            self.reset_game()
+
+
     def start_new_round(self):
-            """Start a new night"""
-            self.round_number += 1
-            # Decrease zombie creation time...more zombies
-            if self.round_number < self.STARTING_ZOMBIE_CREATION_TIME:
-                self.zombie_creation_time -= 1
-            # Reset round values
-            self.round_time = self.STARTING_ROUND_TIME
-            self.zombie_group.empty()
-            self.ruby_group.empty()
-            self.bullet_group.empty()
-            self.player.reset()
-            self.pause_game("You survived the night!","Press 'Enter' to continue...")
+        """Start a new night"""
+        self.round_number += 1
+
+        #Decrease zombie creation time...more zombies
+        if self.round_number < self.STARTING_ZOMBIE_CREATION_TIME:
+            self.zombie_creation_time -= 1
+
+        #Reset round values
+        self.round_time = self.STARTING_ROUND_TIME
+
+        self.zombie_group.empty()
+        self.ruby_group.empty()
+        self.bullet_group.empty()
+
+        self.player.reset()
+
+        self.pause_game("You survived the night!", "Press 'Enter' to continue...")
 
 
     def pause_game(self, main_text, sub_text):
-            """Pause the game"""
-            pygame.mixer.music.pause()
-            # Create main pause text
-            main_text = self.title_font.render( main_text, True, GREEN)
-            main_rect = main_text.get_rect()
-            main_rect.center = (WINDOW_WIDTH//2, WINDOW_HEIGHT//2)
+        """Pause the game"""
+        pygame.mixer.music.pause()
 
-            # Create sub pause text
-            sub_text = self.title_font.render(sub_text, True, WHITE)
-            sub_rect = sub_text.get_rect()
-            sub_rect.center = (WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 64)
+        #Create main pause text
+        main_text = self.title_font.render(main_text, True, GREEN)
+        main_rect = main_text.get_rect()
+        main_rect.center = (WINDOW_WIDTH//2, WINDOW_HEIGHT//2)
 
-            # Display the pause text
-            display_surface.fill(BLACK)
-            display_surface.blit( main_text, main_rect)
-            display_surface.blit( sub_text, sub_rect)
-            pygame.display.update()
-            # Pause the game until user hits enter or quits
-            is_paused = True
-            while is_paused:
-                for event in pygame.event.get():
-                    # User wants to continue
-                    if event.key == pygame.KEYDOWN:
+        #Create sub pause text
+        sub_text = self.title_font.render(sub_text, True, WHITE)
+        sub_rect = sub_text.get_rect()
+        sub_rect.center = (WINDOW_WIDTH//2, WINDOW_HEIGHT//2 + 64)
+
+        #Display the pause text
+        display_surface.fill(BLACK)
+        display_surface.blit(main_text, main_rect)
+        display_surface.blit(sub_text, sub_rect)
+        pygame.display.update()
+
+        #Pause the game until user hits enter or quits
+        is_paused = True
+        while is_paused:
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    #User wants to continue
+                    if event.key == pygame.K_RETURN:
                         is_paused = False
                         pygame.mixer.music.unpause()
-                # User wants to quit
+                #User wants to quit
                 if event.type == pygame.QUIT:
                     is_paused = False
                     pygame.event.post(pygame.event.Event(pygame.QUIT))
                     pygame.mixer.music.stop()
+
+
     def reset_game(self):
-            """Reset the game"""
-            # Reset game values
-            self.score = 0
-            self.round_number = 1
-            self.round_time = self.STARTING_ROUND_TIME
-            self.zombie_creation_time = self.STARTING_ZOMBIE_CREATION_TIME
-            # Reset the player
-            self.player.health = self.player.STARTING_HEALTH
-            self.player.reset()
-            # Empty sprite groups
-            self.zombie_group.empty()
-            self.ruby_group.empty()
-            self.bullet_group.empty()
-            pygame.mixer.music.play(-1, 0.0)
+        """Reset the game"""
+        #Reset game values
+        self.score = 0
+        self.round_number = 1
+        self.round_time = self.STARTING_ROUND_TIME
+        self.zombie_creation_time = self.STARTING_ZOMBIE_CREATION_TIME
+
+        #Reset the player
+        self.player.health = self.player.STARTING_HEALTH
+        self.player.reset()
+
+        #Empty sprite groups
+        self.zombie_group.empty()
+        self.ruby_group.empty()
+        self.bullet_group.empty()
+        pygame.mixer.music.play(-1, 0.0)
