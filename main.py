@@ -1,4 +1,5 @@
 import pygame
+
 from game import Game
 from player import Player
 from portal import Portal
@@ -95,7 +96,7 @@ while running:
                 my_player.jump()
             #Player wants to fire
             if event.key == pygame.K_UP:
-                my_player.fire()
+                may_player.fire()
 
     #Blit the background
     display_surface.blit(background_image, background_rect)

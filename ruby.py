@@ -2,7 +2,7 @@ import random
 
 import pygame
 
-from helpers import load_frames, flip_frames, handle_portal_collision, advance_frame, apply_motion
+from helpers import load_frames, handle_portal_collision, apply_motion, RUBY_FRAMES
 from settings import WINDOW_WIDTH, vector
 
 

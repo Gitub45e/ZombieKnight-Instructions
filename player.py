@@ -1,8 +1,8 @@
 import pygame
 
-import Bullet
-import load_frames, flip_frames, handle_portal_collision, advance_frame, apply_motion
-import vector
+from bullet import Bullet
+from helpers import load_frames, flip_frames, handle_portal_collision, advance_frame, apply_motion
+from settings import vector
 
 RUN_FRAMES = [f"Run ({i}).png" for i in range(1, 11)]
 IDLE_FRAMES = [f"Idle ({i}).png" for i in range(1, 11)]
@@ -28,12 +28,12 @@ class Player(pygame.sprite.Sprite):
 
 
         #Animation frames
-        self.move_right_sprites = ("images/player/run", RUN_FRAMES, (64, 64))
-        self.move_left_sprites = flip_frames("self.move_right_sprites")
+        self.move_right_sprites = load_frames("images/player/run", RUN_FRAMES, (64, 64))
+        self.move_left_sprites = flip_frames(self.move_right_sprites)
         self.idle_right_sprites = load_frames("images/player/idle", IDLE_FRAMES, (64, 64) )
-        self.idle_left_sprites = flip_frames("self.idle_right_sprites")
+        self.idle_left_sprites = flip_frames(self.idle_right_sprites)
         self.jump_right_sprites = load_frames("images/player/jump", JUMP_FRAMES,(64, 64))
-        self.jump_left_sprites = flip_frames("self.jump_right_sprites")
+        self.jump_left_sprites = flip_frames(self.jump_right_sprites)
 
         self.attack_right_sprites = load_frames("images/player/attack",ATTACK_FRAMES,(64, 64))
         self.attack_left_sprites = flip_frames(self.attack_right_sprites)
@@ -42,7 +42,7 @@ class Player(pygame.sprite.Sprite):
         self.image = self.idle_right_sprites[self.current_sprite]
         self.rect = self.image.get_rect()
         self.rect.bottomleft = (x, y)
-        self.mask = c(self.image)
+        self.mask = pygame.mask.from_surface(self.image)
         #Attach sprite groups
         # TODO: assign platform_group to self.platform_group
         # TODO: assign portal_group to self.portal_group
@@ -223,7 +223,7 @@ class Player(pygame.sprite.Sprite):
     def fire(self):
         """Fire a 'bullet' from a sword"""
         self.slash_sound.play()
-        Bullet(self.rect.centerx,self.rect.centery,self.bullet_group,self.bullet_group,self)
+        Bullet(self.rect.centerx,self.rect.centery,self.bullet_group,self)
         self.animate_fire = True
     def reset(self):
         """Reset the player's position"""

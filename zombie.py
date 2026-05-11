@@ -1,11 +1,17 @@
 import random
+
 import pygame
-import load_frames, flip_frames, handle_portal_collision, apply_motion
-import WINDOW_WIDTH, vector, FPS
+
+from helpers import load_frames, flip_frames, handle_portal_collision, apply_motion
+from settings import WINDOW_WIDTH, vector, FPS
+
 WALK_FRAMES = [f"Walk ({i}).png" for i in range(1, 11)]
 DEAD_FRAMES = [f"Dead ({i}).png" for i in range(1, 11)]
+
+
 class Zombie(pygame.sprite.Sprite):
     """An enemy class that moves across the screen"""
+
     def __init__(self, platform_group, portal_group, min_speed, max_speed):
         """Initialize the zombie"""
         super().__init__()
@@ -26,9 +32,7 @@ class Zombie(pygame.sprite.Sprite):
             # TODO: assign "images/zombie/boy" to folder
             folder = "images/zombie/boy"
         # TODO: else:
-        else:
-            folder = "images/zombie/girl"
-
+        folder = "images/zombie/girl"
 
         #Animation frames
         # TODO: assign load_frames() to self.walk_right_sprites with these 3 arguments
@@ -135,113 +139,60 @@ class Zombie(pygame.sprite.Sprite):
                 self.round_time += 1
                 # TODO: if self.round_time == self.RISE_TIME:
                 if self.round_time == self.RISE_TIME:
-                    # TODO: assign True to self.animate_rise
                     self.animate_rise = True
-                    #When the zombie died, the image was kept as the last image
-                    #When it rises, we want to start at index 0 of our rise_sprite lists
-                    # TODO: assign 0 to self.current_sprite
                     self.current_sprite = 0
-
     def move(self):
         """Move the zombie"""
-        # TODO: if not self.is_dead:
         if not self.is_dead:
-            # TODO: if self.direction == -1:
             if self.direction == -1:
-                # TODO: call self.animate() with these 2 arguments
-                #  1: self.walk_left_sprites
-                #  2: 0.5
                 self.animate(self.walk_left_sprites, 0.5 )
-            # TODO:
             else:
-                # TODO: call self.animate() with these 2 arguments
                 self.animate(self.walk_right_sprites,0.5)
-                #  1: self.walk_right_sprites
-                #  2: 0.5
 
-            # TODO: call apply_motion() with 1 argument
-            #  1: self
             apply_motion(self)
     # noinspection PyTypeChecker
     def check_collisions(self):
         """Check for collisions with platforms and portals"""
         #Collision check between zombie and platforms when falling
-        # TODO: assign pygame.sprite.spritecollide() to collided_platforms with these 3 arguments
-        #  1: self
-        #  2: self.platform_group
-        #  3: False
         collided_platforms = pygame.sprite.spritecollide(self, self.platform_group, False)
-        # TODO: if collided_platforms:
-            # TODO: assign collided_platforms[0].rect.top + 1 to self.position.y
         self.position.y = collided_platforms[0].rect.top + 1
-            # TODO: assign 0 to self.velocity.y
         self.velocity.y = 0
-
         # Collision check for portals
-        # TODO: call handle_portal_collision() with 1 argument
-        #  1: self
         handle_portal_collision(self)
     def check_animations(self):
         """Check to see if death/rise animations should run"""
         #Animate the zombie death
-        # TODO: if self.animate_death:
         if self.animate_death:
-            # TODO: if self.direction == 1:
             if self.direction == 1:
-                # TODO: call self.animate() with these 2 arguments
-                #  1: self.die_right_sprites
-                #  2: 0.095
                 self.animate( self.die_right_sprites, 0.095)
             # TOD: else:
             else:
-                # TODO: call self.animate() with these 2 arguments
-                #  1: self.die_left_sprites
-                #  2: 0.095
                 self.animate(self.die_left_sprites, 0.095)
         #Animate the zombie rise
-        # TODO: if self.animate_rise:
         if self.animate_rise:
-            # TODO: if self.direction == 1:
             if self.direction == 1:
-                # TODO: call self.animate()
                 self.animate(self.rise_right_sprites,0.095)
                 #  1: self.rise_right_sprites
                 #  2:  0.095
-            # TODO: else:
             else:
-                # TODO: call self.animate()
                 self.animate(self.rise_left_sprites,0.095)
                 #  1: self.rise_left_sprites
                 #  2:  0.095
         self.animate(self.rise_left_sprites,0.095)
     def animate(self, sprite_list, speed):
         """Animate the zombie's actions"""
-        # TODO: if self.current_sprite < len(sprite_list) -1:
         if self.current_sprite < len(sprite_list) - 1:
-            # TODO: add speed to self.current_sprite
             self.current_sprite += speed
-        # TODO: else:
         else:
-            # TODO: assign 0 to self.current_sprite
             self.current_sprite = 0
             #End the death animation
-            # TODO: if self.animate_death:
             if self.animate_death:
-                # TODO: assign len(sprite_list) - 1 to  self.current_sprite
                 self.current_sprite = len(sprite_list) - 1
-                # TODO: assign False to self.animate_death
                 self.animate_death = False
             #End the rise animation
-            # TODO: if self.animate_rise:
             if self.animate_rise:
-                # TODO: assign False to self.animate_rise
                 self.animate_rise = False
-                # TODO: assign False to self.is_dead
                 self.is_dead = False
-                # TODO: assign 0 to self.frame_count
                 self.frame_count = 0
-                # TODO: assign 0 to self.round_time
                 self.round_time = 0
-
-        # TODO: assign sprite_list[int(self.current_sprite)] to self.image
-        self.image = sprite_list[int(self.current_sprite)]
+                self.image = sprite_list[int(self.current_sprite)]
